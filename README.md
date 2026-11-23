@@ -114,3 +114,6 @@ src/
 `index.html` para cualquier ruta que no sea un archivo (rutas de la SPA), y su dominio debe estar en
 `CORS_ALLOWED_ORIGINS` del backend. Como `VITE_API_URL` se fija al compilar, cada instalación de
 cliente necesita su propio build.
+
+En **Vercel**: importar el repo (preset Vite) y definir `VITE_API_URL` con la URL pública de la API.
+`vercel.json` ya incluye el rewrite a `index.html`. Guía completa en `docs/despliegue.md` del backend.
