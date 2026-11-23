@@ -132,13 +132,13 @@ export default function SimulationDetail() {
       {back}
       <section className="mt-6 rounded-shell border border-line bg-surface p-6 shadow-soft sm:p-10">
         <p className="text-ash">
-          Con {formatMoney(sim.initialCapital, sim.currency)} el {formatDay(sim.marketDate)}
+          Con {formatMoney(sim.initialCapital, sim.currency)} el {formatDay(sim.marketDate)}{' '}
+          {sim.profit > 0 ? 'ganaste' : sim.profit < 0 ? 'perdiste' : 'no ganaste ni perdiste'}
         </p>
         <p
           className={`num display mt-2 text-5xl font-extrabold sm:text-6xl ${gain ? 'text-ember' : 'text-frost'}`}
         >
-          {gain ? 'ganas ' : 'pierdes '}
-          {formatMoney(Math.abs(sim.profit), sim.currency)}
+          {formatSignedMoney(sim.profit, sim.currency)}
         </p>
 
         <dl className="mt-10 grid gap-6 border-t border-line pt-6 sm:grid-cols-4">

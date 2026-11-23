@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { useId, useMemo, useState } from 'react';
-import { formatCop, formatPct } from '../../lib/format';
+import { formatCop, formatPct, formatSignedMoney } from '../../lib/format';
 
 /** Variaciones diarias ilustrativas del índice (%), fijas para que el dibujo sea estable. */
 const DAILY = [
@@ -60,13 +60,15 @@ export function X2Lens() {
       <div className="rounded-shell border border-line bg-surface/80 p-5 shadow-soft backdrop-blur-sm sm:p-7">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
           <div>
-            <p className="text-sm text-ash">Con {formatCop(CAPITAL)} invertidos, hoy</p>
+            <p className="text-sm text-ash">
+              Con {formatCop(CAPITAL)} invertidos, hoy{' '}
+              {gain > 0 ? 'ganarías' : gain < 0 ? 'perderías' : 'no ganarías ni perderías'}
+            </p>
             <p
               className={`num font-display text-4xl font-extrabold sm:text-5xl ${gain >= 0 ? 'text-flare' : 'text-frost'}`}
               aria-live="polite"
             >
-              {gain >= 0 ? 'ganas ' : 'pierdes '}
-              {formatCop(Math.abs(gain))}
+              {formatSignedMoney(gain)}
             </p>
           </div>
           <dl className="flex gap-6 text-sm">
