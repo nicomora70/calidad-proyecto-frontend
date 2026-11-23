@@ -1,0 +1,123 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* Tokens: cálido = tu inversión (ember/flare), frío = el índice (frost). */
+:root {
+  --bg: #f3f3f6;
+  --surface: #ffffff;
+  --surface-2: #ebebf0;
+  --ink: #1a1720;
+  --ash: #5e5966;
+  --line: rgb(26 23 32 / 0.09);
+  --ember: #e85a1c;
+  --flare: #c97a1a;
+  --frost: #5b6f96;
+  --on-ember: #ffffff;
+  --glow: rgb(232 90 28 / 0.22);
+  --shadow: 0 1px 2px rgb(26 23 32 / 0.05), 0 12px 32px -12px rgb(60 40 80 / 0.16);
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #141217;
+  --surface: #1e1b22;
+  --surface-2: #26222b;
+  --ink: #f4f2f6;
+  --ash: #9c97a3;
+  --line: rgb(255 255 255 / 0.07);
+  --ember: #ff6a2b;
+  --flare: #ffb15c;
+  --frost: #7c8fb3;
+  --on-ember: #141217;
+  --glow: rgb(255 106 43 / 0.32);
+  --shadow: 0 0 0 1px rgb(255 255 255 / 0.02), 0 24px 48px -24px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ash: var(--ash);
+  --color-line: var(--line);
+  --color-ember: var(--ember);
+  --color-flare: var(--flare);
+  --color-frost: var(--frost);
+  --color-on-ember: var(--on-ember);
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --radius-shell: 28px;
+  --radius-card: 16px;
+  --radius-ctrl: 10px;
+  --shadow-soft: var(--shadow);
+  /* Escala tipográfica 1.25 */
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5625rem;
+  --text-2xl: 1.953rem;
+  --text-3xl: 2.441rem;
+  --text-4xl: 3.052rem;
+  --text-5xl: 3.815rem;
+  --text-6xl: 4.768rem;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background: var(--bg);
+  min-height: 100dvh;
+  transition: background-color 0.3s ease;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: 'wdth' 82;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--ember);
+  color: var(--on-ember);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
