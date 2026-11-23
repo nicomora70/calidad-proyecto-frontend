@@ -35,6 +35,7 @@ const ACTIONS: Record<string, string> = {
   USER_DEACTIVATED: 'Usuario desactivado',
   ROLE_CHANGED: 'Cambio de rol',
   USER_DELETED: 'Usuario eliminado',
+  USER_ANONYMIZED: 'Datos personales suprimidos',
   BOOTSTRAP_ADMIN_CREATED: 'Administrador inicial creado',
   SIMULATION_CREATED: 'Simulación',
   PROJECTION_CREATED: 'Proyección',
