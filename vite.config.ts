@@ -11,5 +11,21 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: false,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text-summary', 'html', 'lcov'],
+      // Lógica de sesión, errores, formato y los formularios críticos.
+      include: [
+        'src/lib/**',
+        'src/components/app/RequireAuth.tsx',
+        'src/components/app/CapitalInput.tsx',
+        'src/components/ui/Modal.tsx',
+        'src/pages/Login.tsx',
+        'src/pages/ChangePassword.tsx',
+      ],
+      // smooth-scroll y queries solo envuelven Lenis y React Query; se revisan en el recorrido visual.
+      exclude: ['**/*.test.*', 'src/lib/smooth-scroll.tsx', 'src/lib/queries.ts'],
+      thresholds: { lines: 70, functions: 70, branches: 60, statements: 70 },
+    },
   },
 });
