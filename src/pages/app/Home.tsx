@@ -4,14 +4,7 @@ import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/app/AppShell';
 import { SentimentCard } from '../../components/app/SentimentCard';
 import { ButtonLink } from '../../components/ui/Button';
-import {
-  Card,
-  CardTitle,
-  EmptyState,
-  ErrorState,
-  Signed,
-  Skeleton,
-} from '../../components/ui/Surface';
+import { Card, CardTitle, ErrorState, Signed, Skeleton } from '../../components/ui/Surface';
 import { ROLE_LABEL, useAuth } from '../../lib/auth';
 import {
   formatDate,
@@ -20,6 +13,8 @@ import {
   formatPct,
   formatSignedMoney,
 } from '../../lib/format';
+import { DemoNotice } from '../../components/app/DemoNotice';
+import { DEMO_SIMULATIONS } from '../../lib/demo';
 import { useMySimulations, useUnreadCount } from '../../lib/queries';
 
 const RECENT = 12;
@@ -62,21 +57,9 @@ function InvestorHome() {
     );
   }
 
-  const sims = data.content;
-  if (sims.length === 0) {
-    return (
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <Card>
-          <EmptyState
-            title="Haz tu primera simulación"
-            text="Escribe un capital y te mostramos cuánto habrías ganado o perdido con el último movimiento del NASDAQ 100 multiplicado por dos."
-            action={<ButtonLink to="/app/simulaciones">Simular ahora</ButtonLink>}
-          />
-        </Card>
-        <SentimentCard className="self-start" />
-      </div>
-    );
-  }
+  const demo = data.content.length === 0;
+  const sims = demo ? DEMO_SIMULATIONS : data.content;
+  const totalElements = demo ? sims.length : data.page.totalElements;
 
   const last = sims[0]!;
   const total = sims.reduce((acc, s) => acc + s.profit, 0);
@@ -84,6 +67,7 @@ function InvestorHome() {
 
   return (
     <div className="space-y-6">
+      {demo && <DemoNotice />}
       <div className="grid gap-4 sm:grid-cols-3">
         <Stat label="Última simulación" note={formatDateTime(last.createdAt)}>
           <Signed value={last.profit}>{formatSignedMoney(last.profit, currency)}</Signed>
@@ -97,8 +81,8 @@ function InvestorHome() {
         <Stat
           label="Resultado acumulado"
           note={
-            sims.length < data.page.totalElements
-              ? `En tus últimas ${sims.length} de ${data.page.totalElements}`
+            sims.length < totalElements
+              ? `En tus últimas ${sims.length} de ${totalElements}`
               : `En tus ${sims.length} simulaciones`
           }
         >
@@ -132,7 +116,7 @@ function InvestorHome() {
               {sims.slice(0, 4).map((s) => (
                 <li key={s.id}>
                   <Link
-                    to={`/app/simulaciones/${s.id}`}
+                    to={demo ? '/app/simulaciones' : `/app/simulaciones/${s.id}`}
                     className="flex items-center justify-between gap-3 py-2.5 hover:text-ember"
                   >
                     <span>
