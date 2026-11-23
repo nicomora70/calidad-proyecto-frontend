@@ -14,8 +14,13 @@ const SimulationDetail = lazy(() => import('./pages/app/SimulationDetail'));
 const Projections = lazy(() => import('./pages/app/Projections'));
 const News = lazy(() => import('./pages/app/News'));
 const Notifications = lazy(() => import('./pages/app/Notifications'));
+const AdminPanel = lazy(() => import('./pages/app/AdminPanel'));
+const Users = lazy(() => import('./pages/app/Users'));
+const Audit = lazy(() => import('./pages/app/Audit'));
+const Settings = lazy(() => import('./pages/app/Settings'));
 
 const SIMULATE: Role[] = ['INVESTOR', 'ADMIN'];
+const STAFF: Role[] = ['ADMIN', 'IT_MANAGER'];
 const only = (roles: Role[], node: ReactNode) =>
   page(<RequireRole roles={roles}>{node}</RequireRole>);
 
@@ -40,6 +45,10 @@ export const router = createBrowserRouter([
       { path: 'proyecciones', element: only(SIMULATE, <Projections />) },
       { path: 'noticias', element: page(<News />) },
       { path: 'notificaciones', element: page(<Notifications />) },
+      { path: 'panel', element: only(['ADMIN'], <AdminPanel />) },
+      { path: 'usuarios', element: only(['ADMIN'], <Users />) },
+      { path: 'auditoria', element: only(STAFF, <Audit />) },
+      { path: 'configuracion', element: only(STAFF, <Settings />) },
       { path: '*', element: <NotFound /> },
     ],
   },

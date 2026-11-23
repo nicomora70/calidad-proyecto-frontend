@@ -1,5 +1,5 @@
 import { Bell, ChevronDown, KeyRound, LogOut, Menu, X } from 'lucide-react';
-import { useUnreadCount } from '../../lib/queries';
+import { useBranding, useUnreadCount } from '../../lib/queries';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ROLE_LABEL, useAuth } from '../../lib/auth';
@@ -18,24 +18,33 @@ function initials(name: string) {
 
 function SideNav({ onNavigate }: { onNavigate?: () => void }) {
   const { hasRole } = useAuth();
+  const items = NAV.filter((item) => hasRole(...item.roles));
+  const link = ({ to, label, icon: Icon, end }: (typeof NAV)[number]) => (
+    <NavLink
+      key={to}
+      to={to}
+      end={end}
+      onClick={onNavigate}
+      className={({ isActive }) =>
+        `flex items-center gap-3 rounded-ctrl px-3 py-2.5 text-sm font-medium transition-colors ${
+          isActive ? 'bg-ember/12 text-ember' : 'text-ash hover:bg-surface-2 hover:text-ink'
+        }`
+      }
+    >
+      <Icon size={18} />
+      {label}
+    </NavLink>
+  );
+  const admin = items.filter((i) => i.admin);
   return (
     <nav aria-label="Principal" className="flex flex-col gap-1">
-      {NAV.filter((item) => hasRole(...item.roles)).map(({ to, label, icon: Icon, end }) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={end}
-          onClick={onNavigate}
-          className={({ isActive }) =>
-            `flex items-center gap-3 rounded-ctrl px-3 py-2.5 text-sm font-medium transition-colors ${
-              isActive ? 'bg-ember/12 text-ember' : 'text-ash hover:bg-surface-2 hover:text-ink'
-            }`
-          }
-        >
-          <Icon size={18} />
-          {label}
-        </NavLink>
-      ))}
+      {items.filter((i) => !i.admin).map(link)}
+      {admin.length > 0 && (
+        <>
+          <p className="mt-6 mb-1 px-3 text-xs text-ash">Administración</p>
+          {admin.map(link)}
+        </>
+      )}
     </nav>
   );
 }
@@ -127,6 +136,12 @@ function NotificationBell() {
   );
 }
 
+/** Logo con el nombre y la imagen que configuró la empresa (branding). */
+function BrandLogo() {
+  const { data } = useBranding();
+  return <Logo name={data?.productName || 'RiTech'} logoUrl={data?.logoUrl} />;
+}
+
 export function AppShell() {
   const [drawer, setDrawer] = useState(false);
   const location = useLocation();
@@ -157,7 +172,7 @@ export function AppShell() {
     <div className="min-h-dvh lg:grid lg:grid-cols-[256px_1fr]">
       <aside className="sticky top-0 hidden h-dvh flex-col border-r border-line bg-surface px-4 py-5 lg:flex">
         <Link to="/app" className="px-2">
-          <Logo />
+          <BrandLogo />
         </Link>
         <div className="mt-8">
           <SideNav />
@@ -180,7 +195,7 @@ export function AppShell() {
           />
           <div className="relative h-full w-72 border-r border-line bg-surface px-4 py-5">
             <div className="flex items-center justify-between px-2">
-              <Logo />
+              <BrandLogo />
               <button
                 ref={closeButton}
                 type="button"

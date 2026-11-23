@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import type { DailySentiment, Page, Simulation } from '../types/api';
+import type { Branding, DailySentiment, Page, Simulation, User } from '../types/api';
 import { api } from './api';
 
 export interface DateFilter {
@@ -21,7 +21,7 @@ export function useMySimulations(page: number, filter: DateFilter = {}, size = 1
   return useQuery({
     queryKey: keys.mySimulations(page, filter),
     queryFn: ({ signal }) =>
-      api<Page<Simulation>>('/api/me/simulations', {
+      api<Page<Simulation>>('/api/v1/me/simulations', {
         query: { page, size, from: filter.from, to: filter.to },
         signal,
       }),
@@ -33,7 +33,7 @@ export function useUnreadCount() {
   return useQuery({
     queryKey: keys.unread,
     queryFn: ({ signal }) =>
-      api<{ count: number }>('/api/me/notifications/unread-count', { signal }),
+      api<{ count: number }>('/api/v1/me/notifications/unread-count', { signal }),
     refetchInterval: 60_000,
     select: (d) => d.count,
   });
@@ -42,8 +42,32 @@ export function useUnreadCount() {
 export function useDailySentiment() {
   return useQuery({
     queryKey: keys.sentiment,
-    queryFn: ({ signal }) => api<DailySentiment>('/api/news/sentiment', { signal }),
+    queryFn: ({ signal }) => api<DailySentiment>('/api/v1/news/sentiment', { signal }),
     staleTime: 5 * 60_000,
+  });
+}
+
+/** Branding de la instalación (público: también sirve antes de ingresar). */
+export function useBranding() {
+  return useQuery({
+    queryKey: ['branding'],
+    queryFn: ({ signal }) => api<Branding>('/api/v1/settings/branding', { auth: false, signal }),
+    staleTime: 10 * 60_000,
+  });
+}
+
+/** Usuarios para filtros y para poner nombre a los IDs (solo ADMIN puede listarlos). */
+export function useUserDirectory(enabled = true) {
+  return useQuery({
+    queryKey: ['users', 'directory'],
+    queryFn: ({ signal }) =>
+      api<Page<User>>('/api/v1/users', { query: { size: 200, sort: 'fullName,asc' }, signal }),
+    enabled,
+    staleTime: 5 * 60_000,
+    select: (p) => ({
+      list: p.content,
+      byId: new Map(p.content.map((u) => [u.id, u])),
+    }),
   });
 }
 

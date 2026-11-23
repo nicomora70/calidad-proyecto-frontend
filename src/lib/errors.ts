@@ -51,14 +51,29 @@ const MESSAGES: Record<string, string> = {
   LICENSE_EXPIRED: 'La licencia de esta instalación venció. Contacta a tu administrador.',
   MODULE_NOT_LICENSED: 'Tu licencia no incluye este módulo.',
   LICENSE_USER_LIMIT: 'Se alcanzó el número máximo de usuarios de la licencia.',
+  HTTP_404: 'No encontramos lo que buscabas.',
 };
 
 export function errorMessage(err: unknown): string {
   if (err instanceof ApiError) {
+    if (err.code === 'RATE_LIMITED') {
+      const wait = Number(err.problem.retryAfter);
+      return wait > 0
+        ? `Hiciste muchas solicitudes seguidas. Espera ${Math.ceil(wait)} s e inténtalo de nuevo.`
+        : 'Hiciste muchas solicitudes seguidas. Espera un momento e inténtalo de nuevo.';
+    }
     return (
       MESSAGES[err.code] ??
       (err.status >= 500 ? 'Algo falló en el servidor. Inténtalo de nuevo.' : err.message)
     );
   }
   return MESSAGES.NETWORK_ERROR;
+}
+
+/** Código para soporte: el backend lo registra en sus logs (traceId / X-Request-Id). */
+export function supportCode(err: unknown): string | null {
+  if (err instanceof ApiError && err.status >= 500 && typeof err.problem.traceId === 'string') {
+    return err.problem.traceId;
+  }
+  return null;
 }

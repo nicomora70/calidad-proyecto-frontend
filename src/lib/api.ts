@@ -56,11 +56,16 @@ export function storedRefreshToken(): string | null {
 }
 
 async function parseProblem(res: Response): Promise<Problem> {
+  let problem: Problem;
   try {
-    return (await res.json()) as Problem;
+    problem = (await res.json()) as Problem;
   } catch {
-    return { status: res.status };
+    problem = { status: res.status };
   }
+  // 429 RATE_LIMITED: segundos que el backend pide esperar antes de reintentar.
+  const retryAfter = Number(res.headers.get('Retry-After'));
+  if (Number.isFinite(retryAfter) && retryAfter > 0) problem.retryAfter = retryAfter;
+  return problem;
 }
 
 async function send(path: string, init: RequestInit, auth: boolean): Promise<Response> {
@@ -83,7 +88,7 @@ export function refreshSession(): Promise<TokenResponse> {
 
   refreshPromise = (async () => {
     const res = await send(
-      '/api/auth/refresh',
+      '/api/v1/auth/refresh',
       {
         method: 'POST',
         body: JSON.stringify({ refreshToken: token }),
