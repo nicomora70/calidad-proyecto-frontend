@@ -1,4 +1,4 @@
-import { Bell, Plus } from 'lucide-react';
+import { Bell, Plus, ScrollText, ShieldCheck } from 'lucide-react';
 import { lazy, Suspense, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/app/AppShell';
@@ -155,10 +155,24 @@ function InvestorHome() {
   );
 }
 
+/** "Gerente de TI" → "gerente de TI": solo la primera letra, para no romper siglas. */
+const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
 function StaffHome() {
   const { data: unread } = useUnreadCount();
   return (
     <div className="grid gap-6 lg:grid-cols-2">
+      <Card className="lg:col-span-2">
+        <CardTitle>Tus herramientas</CardTitle>
+        <div className="flex flex-wrap gap-2">
+          <ButtonLink to="/app/auditoria" variant="ghost">
+            <ScrollText size={16} /> Revisar la auditoría
+          </ButtonLink>
+          <ButtonLink to="/app/configuracion" variant="ghost">
+            <ShieldCheck size={16} /> Ver la licencia
+          </ButtonLink>
+        </div>
+      </Card>
       <SentimentCard />
       <Card>
         <CardTitle>Notificaciones</CardTitle>
@@ -180,7 +194,7 @@ export default function Home() {
     <>
       <PageHeader
         title={`Hola, ${user.fullName.split(' ')[0]}`}
-        description={`Ingresaste como ${ROLE_LABEL[user.role].toLowerCase()}.`}
+        description={`Ingresaste como ${lowerFirst(ROLE_LABEL[user.role])}.`}
         actions={
           canSimulate && (
             <ButtonLink to="/app/simulaciones">
