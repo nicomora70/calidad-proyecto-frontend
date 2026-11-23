@@ -4,12 +4,13 @@ import { useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/app/AppShell';
 import { DateRange } from '../../components/app/DateRange';
+import { DemoNotice } from '../../components/app/DemoNotice';
+import { DEMO_SIMULATIONS, DEMO_STATISTICS } from '../../lib/demo';
 import { Button } from '../../components/ui/Button';
 import { Spinner } from '../../components/ui/Field';
 import {
   Card,
   CardTitle,
-  EmptyState,
   ErrorState,
   Pagination,
   Signed,
@@ -38,13 +39,7 @@ function Metric({ label, hint, children }: { label: string; hint?: string; child
 }
 
 function StatsGrid({ filters }: { filters: Filters }) {
-  const {
-    data: s,
-    isPending,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['dashboard', 'statistics', filters],
     queryFn: ({ signal }) =>
       api<Statistics>('/api/v1/dashboard/statistics', { query: { ...filters }, signal }),
@@ -67,19 +62,12 @@ function StatsGrid({ filters }: { filters: Filters }) {
       </Card>
     );
   }
-  if (s.count === 0) {
-    return (
-      <Card>
-        <EmptyState
-          title="No hay simulaciones con esos filtros"
-          text="Las estadísticas aparecen en cuanto haya al menos una."
-        />
-      </Card>
-    );
-  }
+  const demo = data.count === 0;
+  const s = demo ? DEMO_STATISTICS : data;
 
   return (
     <div className="space-y-4">
+      {demo && <DemoNotice />}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Metric label="Resultado total" hint="Suma de ganancias y pérdidas">
           <Signed value={s.totalProfit}>{formatSignedMoney(s.totalProfit)}</Signed>
@@ -178,49 +166,64 @@ function AllSimulations({ filters }: { filters: Filters }) {
         </div>
       ) : isError ? (
         <ErrorState error={error} onRetry={() => refetch()} />
-      ) : data.content.length === 0 ? (
-        <EmptyState title="No hay simulaciones con esos filtros" />
       ) : (
-        <>
-          <div className="-mx-5 overflow-x-auto sm:-mx-6">
-            <table className="w-full min-w-[720px] text-sm">
-              <thead>
-                <tr className="border-b border-line text-left text-ash">
-                  <th className="px-5 py-3 font-medium sm:px-6">Persona</th>
-                  <th className="px-3 py-3 font-medium">Fecha</th>
-                  <th className="px-3 py-3 text-right font-medium">Capital</th>
-                  <th className="px-3 py-3 text-right font-medium">Retorno</th>
-                  <th className="px-5 py-3 text-right font-medium sm:px-6">Resultado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.content.map((s) => (
-                  <tr
-                    key={s.id}
-                    className="border-b border-line last:border-0 hover:bg-surface-2/60"
-                  >
-                    <td className="px-5 py-3 font-medium sm:px-6">{nameOf(s.userId)}</td>
-                    <td className="px-3 py-3">
-                      <Link to={`/app/simulaciones/${s.id}`} className="hover:text-ember">
-                        {formatDateTime(s.createdAt)}
-                      </Link>
-                    </td>
-                    <td className="num px-3 py-3 text-right">
-                      {formatMoney(s.initialCapital, s.currency)}
-                    </td>
-                    <td className="px-3 py-3 text-right font-semibold">
-                      <Signed value={s.returnPct}>{formatPct(s.returnPct)}</Signed>
-                    </td>
-                    <td className="px-5 py-3 text-right font-semibold sm:px-6">
-                      <Signed value={s.profit}>{formatSignedMoney(s.profit, s.currency)}</Signed>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <Pagination page={page} totalPages={data.page.totalPages} onChange={setPage} />
-        </>
+        (() => {
+          const demo = data.content.length === 0;
+          const rows = demo ? DEMO_SIMULATIONS : data.content;
+          return (
+            <>
+              {demo && <DemoNotice />}
+              <div className="-mx-5 overflow-x-auto sm:-mx-6">
+                <table className="w-full min-w-[720px] text-sm">
+                  <thead>
+                    <tr className="border-b border-line text-left text-ash">
+                      <th className="px-5 py-3 font-medium sm:px-6">Persona</th>
+                      <th className="px-3 py-3 font-medium">Fecha</th>
+                      <th className="px-3 py-3 text-right font-medium">Capital</th>
+                      <th className="px-3 py-3 text-right font-medium">Retorno</th>
+                      <th className="px-5 py-3 text-right font-medium sm:px-6">Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((s) => (
+                      <tr
+                        key={s.id}
+                        className="border-b border-line last:border-0 hover:bg-surface-2/60"
+                      >
+                        <td className="px-5 py-3 font-medium sm:px-6">
+                          {demo ? 'Inversionista de ejemplo' : nameOf(s.userId)}
+                        </td>
+                        <td className="px-3 py-3">
+                          {demo ? (
+                            formatDateTime(s.createdAt)
+                          ) : (
+                            <Link to={`/app/simulaciones/${s.id}`} className="hover:text-ember">
+                              {formatDateTime(s.createdAt)}
+                            </Link>
+                          )}
+                        </td>
+                        <td className="num px-3 py-3 text-right">
+                          {formatMoney(s.initialCapital, s.currency)}
+                        </td>
+                        <td className="px-3 py-3 text-right font-semibold">
+                          <Signed value={s.returnPct}>{formatPct(s.returnPct)}</Signed>
+                        </td>
+                        <td className="px-5 py-3 text-right font-semibold sm:px-6">
+                          <Signed value={s.profit}>
+                            {formatSignedMoney(s.profit, s.currency)}
+                          </Signed>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {!demo && (
+                <Pagination page={page} totalPages={data.page.totalPages} onChange={setPage} />
+              )}
+            </>
+          );
+        })()
       )}
     </Card>
   );
