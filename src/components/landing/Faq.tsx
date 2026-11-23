@@ -5,7 +5,7 @@ import { useState } from 'react';
 const ITEMS = [
   {
     q: '¿Qué significa apalancamiento x2?',
-    a: 'Tu inversión replica el doble de la variación diaria del NASDAQ 100. Si el índice sube 2 %, tu inversión sube 4 %; si baja 2 %, baja 4 %. Las ganancias crecen más rápido, y las pérdidas también.',
+    a: 'Tu inversión replica el doble de la variación diaria del NASDAQ 100. Si el índice sube 2 %, tu inversión sube 4 %; si baja 2 %, baja 4 %. Las ganancias crecen más rápido, y las pérdidas también.',
   },
   {
     q: '¿De dónde salen los datos del mercado?',
@@ -29,8 +29,11 @@ export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="preguntas" className="mx-auto grid max-w-7xl scroll-mt-24 gap-10 px-4 py-24 sm:px-6 lg:grid-cols-12">
-      <h2 className="display text-4xl font-bold sm:text-5xl lg:col-span-4">Preguntas frecuentes</h2>
+    <section
+      id="preguntas"
+      className="mx-auto grid max-w-7xl scroll-mt-24 gap-10 px-4 py-24 sm:px-6 lg:grid-cols-12"
+    >
+      <h2 className="display text-3xl font-bold sm:text-4xl lg:col-span-4">Preguntas frecuentes</h2>
       <ul className="lg:col-span-8">
         {ITEMS.map((item, i) => {
           const expanded = open === i;

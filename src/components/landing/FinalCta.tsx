@@ -10,7 +10,7 @@ export function FinalCta() {
           className="pointer-events-none absolute -right-32 -bottom-40 size-[34rem] rounded-full blur-3xl"
           style={{ background: 'radial-gradient(closest-side, var(--glow), transparent)' }}
         />
-        <h2 className="display relative max-w-xl text-4xl font-bold sm:text-5xl">
+        <h2 className="display relative max-w-xl text-3xl font-bold sm:text-4xl">
           Tu próxima decisión empieza con una simulación.
         </h2>
         <p className="relative mt-5 max-w-[48ch] text-lg text-ash">

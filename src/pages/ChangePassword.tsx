@@ -26,7 +26,8 @@ export default function ChangePassword() {
   function validate() {
     const e: Record<string, string> = {};
     if (!current) e.currentPassword = 'Escribe tu contraseña actual.';
-    if (next.length < MIN || next.length > MAX) e.newPassword = `Usa entre ${MIN} y ${MAX} caracteres.`;
+    if (next.length < MIN || next.length > MAX)
+      e.newPassword = `Usa entre ${MIN} y ${MAX} caracteres.`;
     else if (next === current) e.newPassword = 'Debe ser distinta de la actual.';
     if (confirm !== next) e.confirm = 'Las contraseñas no coinciden.';
     return e;

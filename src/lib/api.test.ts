@@ -71,7 +71,9 @@ describe('api', () => {
     });
 
     await Promise.all([api('/api/me'), api('/api/me/simulations')]);
-    const refreshCalls = fetchMock.mock.calls.filter(([u]) => String(u).endsWith('/api/auth/refresh'));
+    const refreshCalls = fetchMock.mock.calls.filter(([u]) =>
+      String(u).endsWith('/api/auth/refresh'),
+    );
     expect(refreshCalls).toHaveLength(1);
   });
 

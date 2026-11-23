@@ -33,7 +33,11 @@ export default function Login() {
     setSubmitting(true);
     try {
       const u = await login(email, password);
-      const target = u.mustChangePassword ? '/cambiar-contrasena' : from?.startsWith('/app') ? from : homeFor(u);
+      const target = u.mustChangePassword
+        ? '/cambiar-contrasena'
+        : from?.startsWith('/app')
+          ? from
+          : homeFor(u);
       navigate(target, { replace: true });
     } catch (err) {
       setError(errorMessage(err));
@@ -43,7 +47,10 @@ export default function Login() {
   }
 
   return (
-    <AuthLayout title="Ingresar" intro="Usa la cuenta que te entregó el administrador de tu empresa.">
+    <AuthLayout
+      title="Ingresar"
+      intro="Usa la cuenta que te entregó el administrador de tu empresa."
+    >
       <form onSubmit={onSubmit} noValidate className="space-y-5">
         <FormError message={error} />
         <Field
