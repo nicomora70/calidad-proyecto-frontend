@@ -1,6 +1,6 @@
 import { AlertTriangle, ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { errorMessage } from '../../lib/errors';
+import { errorMessage, supportCode } from '../../lib/errors';
 import { Button } from './Button';
 
 export function Card({ className = '', children }: { className?: string; children: ReactNode }) {
@@ -50,6 +50,11 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
     <div role="alert" className="flex flex-col items-center px-4 py-12 text-center">
       <AlertTriangle size={28} className="text-frost" aria-hidden />
       <p className="mt-3 max-w-[48ch] font-medium">{errorMessage(error)}</p>
+      {supportCode(error) && (
+        <p className="mt-1 text-xs text-ash">
+          Código para soporte: <span className="num select-all">{supportCode(error)}</span>
+        </p>
+      )}
       {onRetry && (
         <Button variant="ghost" className="mt-5" onClick={onRetry}>
           Reintentar

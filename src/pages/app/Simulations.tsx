@@ -37,7 +37,7 @@ function NewSimulation() {
 
   const create = useMutation({
     mutationFn: (initialCapital: number) =>
-      api<Simulation>('/api/simulations', { method: 'POST', body: { initialCapital } }),
+      api<Simulation>('/api/v1/simulations', { method: 'POST', body: { initialCapital } }),
     onSuccess: (sim) => {
       queryClient.setQueryData(keys.simulation(sim.id), sim);
       queryClient.invalidateQueries({ queryKey: ['me', 'simulations'] });
@@ -90,7 +90,7 @@ function History() {
   async function exportCsv() {
     setExporting(true);
     try {
-      await download('/api/me/simulations/export', { ...filter }, 'mis-simulaciones.csv');
+      await download('/api/v1/me/simulations/export', { ...filter }, 'mis-simulaciones.csv');
       toast('Historial exportado');
     } catch (err) {
       toast(errorMessage(err), 'error');

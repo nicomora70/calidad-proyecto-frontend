@@ -40,7 +40,7 @@ export default function News() {
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: ['news', page, filter, sentiment],
     queryFn: ({ signal }) =>
-      api<Page<NewsArticle>>('/api/news', {
+      api<Page<NewsArticle>>('/api/v1/news', {
         query: { page, size: 12, from: filter.from, to: filter.to, sentiment },
         signal,
       }),
@@ -48,7 +48,7 @@ export default function News() {
   });
 
   const refresh = useMutation({
-    mutationFn: () => api('/api/news/refresh', { method: 'POST' }),
+    mutationFn: () => api('/api/v1/news/refresh', { method: 'POST' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['news'] });
       toast('Noticias actualizadas');

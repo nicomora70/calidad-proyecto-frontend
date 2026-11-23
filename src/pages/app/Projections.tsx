@@ -115,7 +115,7 @@ export default function Projections() {
 
   const project = useMutation({
     mutationFn: (body: { initialCapital: number; horizonDays: number }) =>
-      api<ProjectionResponse>('/api/projections', { method: 'POST', body }),
+      api<ProjectionResponse>('/api/v1/projections', { method: 'POST', body }),
   });
 
   function onSubmit(e: FormEvent) {

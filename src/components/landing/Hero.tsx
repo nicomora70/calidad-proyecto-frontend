@@ -15,7 +15,8 @@ export function Hero() {
         </h1>
         <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-ash">
           RiTech simula, proyecta y vigila tu inversión apalancada para que decidas con números, no
-          con intuición. Si el NASDAQ 100 sube 2&nbsp;%, ganas 4&nbsp;%. Si baja 2&nbsp;%, pierdes 4&nbsp;%.
+          con intuición. Si el NASDAQ 100 sube 2&nbsp;%, ganas 4&nbsp;%. Si baja 2&nbsp;%, pierdes
+          4&nbsp;%.
         </p>
         <div className="mt-9 flex flex-wrap gap-3">
           <ButtonLink to="/login">Simula tu inversión</ButtonLink>

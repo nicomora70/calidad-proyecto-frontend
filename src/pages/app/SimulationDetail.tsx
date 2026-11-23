@@ -21,7 +21,7 @@ const MAX_POLLS = 40; // ~2 minutos
 function AlertCard({ simulationId }: { simulationId: string }) {
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: keys.alert(simulationId),
-    queryFn: ({ signal }) => api<AiAlert>(`/api/simulations/${simulationId}/alert`, { signal }),
+    queryFn: ({ signal }) => api<AiAlert>(`/api/v1/simulations/${simulationId}/alert`, { signal }),
     refetchInterval: (q) =>
       q.state.data?.status === 'PENDING' && q.state.dataUpdateCount < MAX_POLLS ? POLL_MS : false,
   });
@@ -91,7 +91,7 @@ export default function SimulationDetail() {
     refetch,
   } = useQuery({
     queryKey: keys.simulation(id),
-    queryFn: ({ signal }) => api<Simulation>(`/api/simulations/${id}`, { signal }),
+    queryFn: ({ signal }) => api<Simulation>(`/api/v1/simulations/${id}`, { signal }),
   });
 
   const back = (

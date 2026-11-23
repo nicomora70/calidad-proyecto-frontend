@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [queryClient]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const session = await api<TokenResponse>('/api/auth/login', {
+    const session = await api<TokenResponse>('/api/v1/auth/login', {
       method: 'POST',
       body: { email: email.trim(), password },
       auth: false,
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const changePassword = useCallback(async (currentPassword: string, newPassword: string) => {
-    const session = await api<TokenResponse>('/api/auth/change-password', {
+    const session = await api<TokenResponse>('/api/v1/auth/change-password', {
       method: 'POST',
       body: { currentPassword, newPassword },
     });
@@ -68,9 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (refreshToken) {
       // Si falla, el token expira solo; la sesión local se cierra igual.
       // Endpoint público: sin Bearer, para que nunca intente renovar la sesión que se está cerrando.
-      await api('/api/auth/logout', { method: 'POST', body: { refreshToken }, auth: false }).catch(
-        () => {},
-      );
+      await api('/api/v1/auth/logout', {
+        method: 'POST',
+        body: { refreshToken },
+        auth: false,
+      }).catch(() => {});
     }
     storeSession(null);
   }, []);

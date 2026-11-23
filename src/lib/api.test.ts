@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TokenResponse } from '../types/api';
 import { api, setSessionListener, storeSession, storedRefreshToken } from './api';
-import { ApiError } from './errors';
+import { ApiError, errorMessage } from './errors';
 
 const user = {
   id: 'u1',
@@ -46,7 +46,7 @@ const authHeader = (call: number) =>
 describe('api', () => {
   it('envía el access token como Bearer', async () => {
     fetchMock.mockResolvedValueOnce(json(200, { ok: true }));
-    await expect(api('/api/me')).resolves.toEqual({ ok: true });
+    await expect(api('/api/v1/me')).resolves.toEqual({ ok: true });
     expect(authHeader(0)).toBe('Bearer access-1');
   });
 
@@ -56,8 +56,8 @@ describe('api', () => {
       .mockResolvedValueOnce(json(200, session(2)))
       .mockResolvedValueOnce(json(200, { ok: true }));
 
-    await expect(api('/api/me')).resolves.toEqual({ ok: true });
-    expect(String(fetchMock.mock.calls[1]![0])).toContain('/api/auth/refresh');
+    await expect(api('/api/v1/me')).resolves.toEqual({ ok: true });
+    expect(String(fetchMock.mock.calls[1]![0])).toContain('/api/v1/auth/refresh');
     expect(authHeader(2)).toBe('Bearer access-2');
     expect(storedRefreshToken()).toBe('refresh-2');
   });
@@ -65,14 +65,14 @@ describe('api', () => {
   it('peticiones concurrentes comparten una sola renovación', async () => {
     fetchMock.mockImplementation(async (input, init) => {
       const url = String(input);
-      if (url.endsWith('/api/auth/refresh')) return json(200, session(2));
+      if (url.endsWith('/api/v1/auth/refresh')) return json(200, session(2));
       const auth = new Headers(init?.headers).get('Authorization');
       return auth === 'Bearer access-2' ? json(200, { url }) : json(401, { code: 'TOKEN_EXPIRED' });
     });
 
-    await Promise.all([api('/api/me'), api('/api/me/simulations')]);
+    await Promise.all([api('/api/v1/me'), api('/api/v1/me/simulations')]);
     const refreshCalls = fetchMock.mock.calls.filter(([u]) =>
-      String(u).endsWith('/api/auth/refresh'),
+      String(u).endsWith('/api/v1/auth/refresh'),
     );
     expect(refreshCalls).toHaveLength(1);
   });
@@ -84,14 +84,14 @@ describe('api', () => {
       .mockResolvedValueOnce(json(401, { code: 'TOKEN_EXPIRED' }))
       .mockResolvedValueOnce(json(401, { code: 'INVALID_REFRESH_TOKEN' }));
 
-    await expect(api('/api/me')).rejects.toMatchObject({ code: 'INVALID_REFRESH_TOKEN' });
+    await expect(api('/api/v1/me')).rejects.toMatchObject({ code: 'INVALID_REFRESH_TOKEN' });
     expect(listener).toHaveBeenCalledWith(null);
     expect(storedRefreshToken()).toBeNull();
   });
 
   it('convierte errores RFC 7807 en ApiError con su código', async () => {
     fetchMock.mockResolvedValueOnce(json(400, { code: 'INSUFFICIENT_CAPITAL', detail: 'too low' }));
-    const err = await api('/api/simulations', { method: 'POST', body: {} }).catch((e) => e);
+    const err = await api('/api/v1/simulations', { method: 'POST', body: {} }).catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err).toMatchObject({ status: 400, code: 'INSUFFICIENT_CAPITAL' });
   });
@@ -116,8 +116,20 @@ describe('api', () => {
     expect(sessionStorage.getItem('ritech-refresh')).toBeNull();
   });
 
+  it('429 RATE_LIMITED conserva Retry-After para el mensaje', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ code: 'RATE_LIMITED' }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json', 'Retry-After': '12' },
+      }),
+    );
+    const err = await api('/api/v1/me').catch((e) => e);
+    expect(err).toMatchObject({ status: 429, code: 'RATE_LIMITED' });
+    expect(errorMessage(err)).toContain('12 s');
+  });
+
   it('un fallo de red produce NETWORK_ERROR', async () => {
     fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'));
-    await expect(api('/api/me')).rejects.toMatchObject({ code: 'NETWORK_ERROR' });
+    await expect(api('/api/v1/me')).rejects.toMatchObject({ code: 'NETWORK_ERROR' });
   });
 });

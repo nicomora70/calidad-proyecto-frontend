@@ -122,6 +122,54 @@ export interface NotificationPreferences {
   emailAvailable: boolean;
 }
 
+export interface Statistics {
+  count: number;
+  totalCapital: number;
+  totalProfit: number;
+  meanReturnPct: number;
+  weightedReturnPct: number;
+  stdevReturnPct: number;
+  bestReturnPct: number;
+  worstReturnPct: number;
+  maxDrawdownPct: number;
+  winRatePct: number;
+}
+
+export interface AuditEntry {
+  id: string;
+  actorId: string | null;
+  action: string;
+  entityType: string | null;
+  entityId: string | null;
+  details: string | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  createdAt: string;
+}
+
+export interface Branding {
+  productName: string;
+  companyName: string | null;
+  primaryColor: string;
+  logoUrl: string | null;
+  legalNotice: string;
+}
+
+export type LicenseState = 'DISABLED' | 'MISSING' | 'ACTIVE' | 'EXPIRING' | 'EXPIRED';
+
+export interface LicenseStatus {
+  state: LicenseState;
+  licenseId: string | null;
+  company: string | null;
+  plan: 'BASIC' | 'PROFESSIONAL' | 'ENTERPRISE' | null;
+  modules: string[] | null;
+  maxUsers: number | null;
+  activeUsers: number;
+  issuedAt: string | null;
+  expiresAt: string | null;
+  daysRemaining: number | null;
+}
+
 /** Cuerpo RFC 7807 que devuelve la API ante cualquier error. */
 export interface Problem {
   status?: number;

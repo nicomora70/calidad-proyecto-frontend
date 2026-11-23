@@ -47,7 +47,7 @@ function Inbox() {
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: [...keys.notifications, unread, page],
     queryFn: ({ signal }) =>
-      api<Page<AppNotification>>('/api/me/notifications', {
+      api<Page<AppNotification>>('/api/v1/me/notifications', {
         query: { unread, page, size: 15 },
         signal,
       }),
@@ -57,12 +57,12 @@ function Inbox() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: keys.notifications });
 
   const markRead = useMutation({
-    mutationFn: (id: string) => api(`/api/me/notifications/${id}/read`, { method: 'PATCH' }),
+    mutationFn: (id: string) => api(`/api/v1/me/notifications/${id}/read`, { method: 'PATCH' }),
     onSuccess: invalidate,
   });
   const markAll = useMutation({
     mutationFn: () =>
-      api<{ updated: number }>('/api/me/notifications/read-all', { method: 'POST' }),
+      api<{ updated: number }>('/api/v1/me/notifications/read-all', { method: 'POST' }),
     onSuccess: (r) => {
       invalidate();
       toast(
@@ -212,7 +212,7 @@ function Preferences() {
   const { data, isPending, isError, error, refetch } = useQuery({
     queryKey: keys.preferences,
     queryFn: ({ signal }) =>
-      api<NotificationPreferences>('/api/me/notification-preferences', { signal }),
+      api<NotificationPreferences>('/api/v1/me/notification-preferences', { signal }),
   });
 
   return (
@@ -244,7 +244,8 @@ function PreferencesForm({ initial: data }: { initial: NotificationPreferences }
       emailEnabled: boolean;
       inAppEnabled: boolean;
       variationThresholdPct: number;
-    }) => api<NotificationPreferences>('/api/me/notification-preferences', { method: 'PUT', body }),
+    }) =>
+      api<NotificationPreferences>('/api/v1/me/notification-preferences', { method: 'PUT', body }),
     onSuccess: (saved) => {
       queryClient.setQueryData(keys.preferences, saved);
       toast('Preferencias guardadas');
