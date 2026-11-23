@@ -5,12 +5,41 @@ const BASE_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080').repla
 const REFRESH_KEY = 'ritech-refresh';
 
 /*
- * El access token vive solo en memoria. El refresh token se guarda en sessionStorage para
- * sobrevivir a una recarga de la pestaña; cada uno sirve una sola vez y se reemplaza al usarlo.
+ * Ambos tokens viven en memoria. El refresh token es de un solo uso y el backend cierra todas
+ * las sesiones si ve uno reutilizado (REFRESH_TOKEN_REUSED). Por eso solo se deja en
+ * sessionStorage mientras la pestaña se descarga (pagehide) y se retira al arrancar: una recarga
+ * lo recupera, pero "Duplicar pestaña" no lo copia y no puede provocar una reutilización.
  */
 let accessToken: string | null = null;
+let refreshToken: string | null = takeStoredRefreshToken();
 let refreshPromise: Promise<TokenResponse> | null = null;
 let onSessionChange: ((session: TokenResponse | null) => void) | null = null;
+
+function takeStoredRefreshToken(): string | null {
+  try {
+    const token = sessionStorage.getItem(REFRESH_KEY);
+    sessionStorage.removeItem(REFRESH_KEY);
+    return token;
+  } catch {
+    return null;
+  }
+}
+
+/** Guarda el refresh token justo antes de descargar la página para sobrevivir a una recarga. */
+export function persistForReload() {
+  if (!refreshToken) return;
+  try {
+    sessionStorage.setItem(REFRESH_KEY, refreshToken);
+  } catch {
+    // Sin almacenamiento: tras recargar habrá que ingresar de nuevo.
+  }
+}
+
+window.addEventListener('pagehide', persistForReload);
+// Si la página vuelve del caché de navegación (bfcache), retira de nuevo el token del almacenamiento.
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) takeStoredRefreshToken();
+});
 
 export function setSessionListener(fn: typeof onSessionChange) {
   onSessionChange = fn;
@@ -18,21 +47,12 @@ export function setSessionListener(fn: typeof onSessionChange) {
 
 export function storeSession(session: TokenResponse | null) {
   accessToken = session?.accessToken ?? null;
-  try {
-    if (session) sessionStorage.setItem(REFRESH_KEY, session.refreshToken);
-    else sessionStorage.removeItem(REFRESH_KEY);
-  } catch {
-    // Sin almacenamiento: la sesión se pierde al recargar, pero sigue funcionando.
-  }
+  refreshToken = session?.refreshToken ?? null;
   onSessionChange?.(session);
 }
 
 export function storedRefreshToken(): string | null {
-  try {
-    return sessionStorage.getItem(REFRESH_KEY);
-  } catch {
-    return null;
-  }
+  return refreshToken;
 }
 
 async function parseProblem(res: Response): Promise<Problem> {

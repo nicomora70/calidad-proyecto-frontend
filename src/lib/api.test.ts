@@ -94,6 +94,26 @@ describe('api', () => {
     expect(err).toMatchObject({ status: 400, code: 'INSUFFICIENT_CAPITAL' });
   });
 
+  it('al cargar retira el refresh token del almacenamiento y lo devuelve en pagehide', async () => {
+    vi.resetModules();
+    sessionStorage.setItem('ritech-refresh', 'refresh-guardado');
+    const fresh = await import('./api');
+
+    expect(fresh.storedRefreshToken()).toBe('refresh-guardado');
+    // Una pestaña duplicada en este momento no hereda el token.
+    expect(sessionStorage.getItem('ritech-refresh')).toBeNull();
+
+    window.dispatchEvent(new Event('pagehide'));
+    expect(sessionStorage.getItem('ritech-refresh')).toBe('refresh-guardado');
+
+    // Tras cerrar sesión no se guarda nada. (Se llama directo: el módulo original de este archivo
+    // también escucha pagehide y escribiría su propio token.)
+    fresh.storeSession(null);
+    sessionStorage.clear();
+    fresh.persistForReload();
+    expect(sessionStorage.getItem('ritech-refresh')).toBeNull();
+  });
+
   it('un fallo de red produce NETWORK_ERROR', async () => {
     fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'));
     await expect(api('/api/me')).rejects.toMatchObject({ code: 'NETWORK_ERROR' });

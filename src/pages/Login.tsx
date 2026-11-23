@@ -4,7 +4,7 @@ import { AuthLayout } from '../components/app/AuthLayout';
 import { Button } from '../components/ui/Button';
 import { Field, FormError, Spinner } from '../components/ui/Field';
 import { homeFor, useAuth } from '../lib/auth';
-import { errorMessage } from '../lib/errors';
+import { ApiError, errorMessage } from '../lib/errors';
 
 export default function Login() {
   const { status, user, login } = useAuth();
@@ -15,6 +15,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
   if (status === 'authenticated' && user && !submitting) {
@@ -28,6 +29,7 @@ export default function Login() {
       return;
     }
     setError(null);
+    setFieldErrors({});
     setSubmitting(true);
     try {
       const u = await login(email, password);
@@ -35,6 +37,7 @@ export default function Login() {
       navigate(target, { replace: true });
     } catch (err) {
       setError(errorMessage(err));
+      if (err instanceof ApiError) setFieldErrors(err.fieldErrors);
       setSubmitting(false);
     }
   }
@@ -50,6 +53,7 @@ export default function Login() {
           inputMode="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={fieldErrors.email}
           autoFocus
         />
         <Field
@@ -58,6 +62,7 @@ export default function Login() {
           autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          error={fieldErrors.password}
         />
         <Button type="submit" className="w-full" disabled={submitting}>
           {submitting && <Spinner />}

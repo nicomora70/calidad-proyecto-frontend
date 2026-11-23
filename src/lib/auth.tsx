@@ -67,7 +67,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const refreshToken = storedRefreshToken();
     if (refreshToken) {
       // Si falla, el token expira solo; la sesión local se cierra igual.
-      await api('/api/auth/logout', { method: 'POST', body: { refreshToken } }).catch(() => {});
+      // Endpoint público: sin Bearer, para que nunca intente renovar la sesión que se está cerrando.
+      await api('/api/auth/logout', { method: 'POST', body: { refreshToken }, auth: false }).catch(
+        () => {},
+      );
     }
     storeSession(null);
   }, []);

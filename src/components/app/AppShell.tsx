@@ -110,10 +110,28 @@ function UserMenu() {
 export function AppShell() {
   const [drawer, setDrawer] = useState(false);
   const location = useLocation();
+  const openButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [location.pathname]);
+
+  // Menú móvil: foco dentro al abrir, Escape para cerrar, fondo sin scroll y foco de vuelta al cerrar.
+  useEffect(() => {
+    if (!drawer) return;
+    const trigger = openButton.current;
+    closeButton.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setDrawer(false);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+      trigger?.focus();
+    };
+  }, [drawer]);
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[256px_1fr]">
@@ -131,13 +149,20 @@ export function AppShell() {
           <button
             type="button"
             aria-label="Cerrar menú"
+            tabIndex={-1}
             className="absolute inset-0 bg-black/50"
             onClick={() => setDrawer(false)}
           />
           <div className="relative h-full w-72 border-r border-line bg-surface px-4 py-5">
             <div className="flex items-center justify-between px-2">
               <Logo />
-              <button type="button" aria-label="Cerrar menú" onClick={() => setDrawer(false)}>
+              <button
+                ref={closeButton}
+                type="button"
+                aria-label="Cerrar menú"
+                onClick={() => setDrawer(false)}
+                className="grid size-10 place-items-center rounded-ctrl"
+              >
                 <X size={20} />
               </button>
             </div>
@@ -151,8 +176,10 @@ export function AppShell() {
       <div className="min-w-0">
         <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-bg/80 px-4 backdrop-blur-xl sm:px-8">
           <button
+            ref={openButton}
             type="button"
             aria-label="Abrir menú"
+            aria-expanded={drawer}
             onClick={() => setDrawer(true)}
             className="grid size-10 place-items-center rounded-ctrl border border-line lg:hidden"
           >

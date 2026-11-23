@@ -13,8 +13,11 @@ export class ApiError extends Error {
     this.problem = problem;
   }
 
+  /** Campos rechazados por la validación del servidor, con un mensaje en español. */
   get fieldErrors(): Record<string, string> {
-    return this.problem.errors ?? {};
+    return Object.fromEntries(
+      Object.keys(this.problem.errors ?? {}).map((field) => [field, 'Revisa este campo.']),
+    );
   }
 }
 

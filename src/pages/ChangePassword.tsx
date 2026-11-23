@@ -47,6 +47,9 @@ export default function ChangePassword() {
         setErrors({ currentPassword: errorMessage(err) });
       } else if (err instanceof ApiError && err.code === 'PASSWORD_REUSED') {
         setErrors({ newPassword: errorMessage(err) });
+      } else if (err instanceof ApiError && err.code === 'VALIDATION_ERROR') {
+        setErrors(err.fieldErrors);
+        setFormError(errorMessage(err));
       } else {
         setFormError(errorMessage(err));
       }
@@ -100,7 +103,7 @@ export default function ChangePassword() {
             Salir
           </Button>
         ) : (
-          <Button type="button" variant="ghost" className="w-full" onClick={() => navigate(-1)}>
+          <Button type="button" variant="ghost" className="w-full" onClick={() => navigate('/app')}>
             Cancelar
           </Button>
         )}
