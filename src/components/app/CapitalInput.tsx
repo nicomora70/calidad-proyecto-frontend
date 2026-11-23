@@ -38,7 +38,7 @@ export function CapitalInput({
           onChange={(e) => onChange(digitsOnly(e.target.value))}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="num placeholder:font-normal placeholder:text-ash/45 h-12 w-full rounded-ctrl border border-line bg-bg pr-14 pl-8 font-display text-xl font-semibold focus:border-ember focus:ring-3 focus:ring-ember/20 focus:outline-none focus-visible:outline-none aria-[invalid=true]:border-frost"
+          className="num placeholder:font-normal placeholder:text-ash/45 h-12 w-full rounded-ctrl border border-line bg-bg pr-14 pl-8 font-display text-xl font-bold focus:border-ember focus:ring-3 focus:ring-ember/20 focus:outline-none focus-visible:outline-none aria-[invalid=true]:border-frost"
         />
         <span className="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-sm text-ash">
           COP

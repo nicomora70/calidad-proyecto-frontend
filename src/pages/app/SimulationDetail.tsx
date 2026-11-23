@@ -54,7 +54,7 @@ function AlertCard({ simulationId }: { simulationId: string }) {
   } else {
     body = (
       <>
-        {data.title && <h3 className="font-display text-xl font-semibold">{data.title}</h3>}
+        {data.title && <h3 className="font-display text-xl font-bold">{data.title}</h3>}
         <p className="mt-3 max-w-[68ch] leading-relaxed whitespace-pre-line">{data.content}</p>
         <p className="mt-5 text-xs text-ash">{data.disclaimer}.</p>
         {data.completedAt && (
@@ -144,25 +144,25 @@ export default function SimulationDetail() {
         <dl className="mt-10 grid gap-6 border-t border-line pt-6 sm:grid-cols-4">
           <div>
             <dt className="text-sm text-ash">{sim.symbol} ese día</dt>
-            <dd className="num mt-1 font-display text-2xl font-semibold text-frost">
+            <dd className="num mt-1 font-display text-2xl font-bold text-frost">
               {formatPct(sim.marketVariationPct)}
             </dd>
           </div>
           <div>
             <dt className="text-sm text-ash">Apalancamiento</dt>
-            <dd className="num mt-1 font-display text-2xl font-semibold">× {sim.leverage}</dd>
+            <dd className="num mt-1 font-display text-2xl font-bold">× {sim.leverage}</dd>
           </div>
           <div>
             <dt className="text-sm text-ash">Tu retorno</dt>
             <dd
-              className={`num mt-1 font-display text-2xl font-semibold ${gain ? 'text-ember' : 'text-frost'}`}
+              className={`num mt-1 font-display text-2xl font-bold ${gain ? 'text-ember' : 'text-frost'}`}
             >
               {formatPct(sim.returnPct)}
             </dd>
           </div>
           <div>
             <dt className="text-sm text-ash">Valor final</dt>
-            <dd className="num mt-1 font-display text-2xl font-semibold">
+            <dd className="num mt-1 font-display text-2xl font-bold">
               {formatMoney(sim.finalAmount, sim.currency)}
             </dd>
             <dd className="num text-sm text-ash">{formatSignedMoney(sim.profit, sim.currency)}</dd>

@@ -23,7 +23,7 @@ export function AuthLayout({
           <ThemeToggle />
         </div>
         <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-12">
-          <h1 className="display text-4xl font-bold">{title}</h1>
+          <h1 className="display text-3xl font-bold">{title}</h1>
           <div className="mt-3 text-ash">{intro}</div>
           <div className="mt-9">{children}</div>
         </main>

@@ -7,9 +7,9 @@ describe('format', () => {
   });
 
   it('porcentajes con signo y coma decimal', () => {
-    expect(formatPct(1.7)).toBe('+1,7 %');
-    expect(formatPct(-2.05)).toBe('-2,05 %');
-    expect(formatPct(0)).toBe('0,0 %');
+    expect(formatPct(1.7)).toBe('+1,7 %');
+    expect(formatPct(-2.05)).toBe('-2,05 %');
+    expect(formatPct(0)).toBe('0,0 %');
   });
 
   it('dinero con signo explícito', () => {

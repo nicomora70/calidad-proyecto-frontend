@@ -178,7 +178,7 @@ export function X2Lens() {
             x={x(last) + 14}
             fill="var(--ember)"
             fontSize="15"
-            fontWeight="700"
+            fontWeight="600"
             className="num"
             animate={{ y: y(levered[last]) + 5 }}
             transition={morph}

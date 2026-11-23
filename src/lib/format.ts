@@ -39,7 +39,7 @@ export function formatMoney(n: number, currency = 'COP') {
 
 export const formatSignedMoney = (n: number, currency?: string) =>
   `${n > 0 ? '+' : n < 0 ? '−' : ''}${formatMoney(Math.abs(n), currency)}`;
-export const formatPct = (n: number) => `${pct.format(n)} %`;
+export const formatPct = (n: number) => `${pct.format(n)}\u00a0%`;
 export const formatDateTime = (iso: string) => dateTime.format(new Date(iso));
 export const formatDate = (iso: string) => date.format(new Date(iso));
 

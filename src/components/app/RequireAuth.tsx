@@ -35,7 +35,7 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
   if (!hasRole(...roles)) {
     return (
       <div className="mx-auto max-w-md py-24 text-center">
-        <h1 className="font-display text-2xl font-semibold">
+        <h1 className="font-display text-2xl font-bold">
           Esta sección no está disponible para tu rol
         </h1>
         <p className="mt-2 text-ash">

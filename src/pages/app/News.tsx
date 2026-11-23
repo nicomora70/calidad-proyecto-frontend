@@ -130,7 +130,7 @@ export default function News() {
                           {sentimentText(n.sentimentLabel)}
                         </span>
                       </div>
-                      <h2 className="mt-2 font-display text-lg leading-snug font-semibold">
+                      <h2 className="mt-2 font-display text-lg leading-snug font-bold">
                         <a
                           href={n.url}
                           target="_blank"

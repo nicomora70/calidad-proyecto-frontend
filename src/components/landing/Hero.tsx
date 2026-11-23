@@ -10,12 +10,12 @@ export function Hero() {
           <span className="size-1.5 rounded-full bg-ember" />
           NASDAQ 100 con apalancamiento x2
         </p>
-        <h1 className="display mt-6 text-5xl font-bold sm:text-6xl">
+        <h1 className="display mt-6 text-4xl font-bold sm:text-5xl">
           Cuando el índice se mueve, tu inversión se mueve el doble.
         </h1>
         <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-ash">
           RiTech simula, proyecta y vigila tu inversión apalancada para que decidas con números, no
-          con intuición. Si el NASDAQ 100 sube 2 %, ganas 4 %. Si baja 2 %, pierdes 4 %.
+          con intuición. Si el NASDAQ 100 sube 2&nbsp;%, ganas 4&nbsp;%. Si baja 2&nbsp;%, pierdes 4&nbsp;%.
         </p>
         <div className="mt-9 flex flex-wrap gap-3">
           <ButtonLink to="/login">Simula tu inversión</ButtonLink>

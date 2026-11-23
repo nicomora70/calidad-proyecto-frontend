@@ -71,7 +71,7 @@ function UserMenu() {
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-2.5 rounded-ctrl py-1 pr-2 pl-1 hover:bg-surface-2"
       >
-        <span className="grid size-8 place-items-center rounded-full bg-ember text-xs font-bold text-on-ember">
+        <span className="grid size-8 place-items-center rounded-full bg-ember text-xs font-semibold text-on-ember">
           {initials(user.fullName)}
         </span>
         <span className="hidden text-left sm:block">
@@ -119,7 +119,7 @@ function NotificationBell() {
     >
       <Bell size={18} />
       {count > 0 && (
-        <span className="num absolute -top-1.5 -right-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-ember px-1 text-[11px] font-bold text-on-ember">
+        <span className="num absolute -top-1.5 -right-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-ember px-1 text-[11px] font-semibold text-on-ember">
           {count > 99 ? '99+' : count}
         </span>
       )}
@@ -235,7 +235,7 @@ export function PageHeader({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="display text-4xl font-bold">{title}</h1>
+        <h1 className="display text-3xl font-bold">{title}</h1>
         {description && <p className="mt-2 max-w-[60ch] text-ash">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}

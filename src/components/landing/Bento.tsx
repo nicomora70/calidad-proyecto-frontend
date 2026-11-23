@@ -15,7 +15,7 @@ function Tile({ className = '', children }: { className?: string; children: Reac
 
 function TileTitle({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
-    <h3 className="flex items-center gap-2.5 font-display text-xl font-semibold tracking-tight">
+    <h3 className="flex items-center gap-2.5 font-display text-xl font-bold">
       <span className="text-ember">{icon}</span>
       {children}
     </h3>
@@ -26,7 +26,7 @@ export function Bento() {
   return (
     <section id="funciones" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-24 sm:px-6">
       <div className="max-w-2xl">
-        <h2 className="display text-4xl font-bold sm:text-5xl">
+        <h2 className="display text-3xl font-bold sm:text-4xl">
           Todo lo que necesitas para decidir, en un solo lugar.
         </h2>
         <p className="mt-5 text-lg text-ash">

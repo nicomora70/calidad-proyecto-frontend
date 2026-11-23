@@ -16,7 +16,7 @@ export function Card({ className = '', children }: { className?: string; childre
 export function CardTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h2 className="font-display text-lg font-semibold">{children}</h2>
+      <h2 className="font-display text-lg font-bold">{children}</h2>
       {action}
     </div>
   );
