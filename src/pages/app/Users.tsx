@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, Copy, Pencil, RefreshCw, Trash2, UserPlus } from 'lucide-react';
+import { Check, Copy, Pencil, RefreshCw, Trash2, UserPlus, UserX } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { PageHeader } from '../../components/app/AppShell';
 import { Button } from '../../components/ui/Button';
@@ -348,8 +348,65 @@ function DeleteUser({ user, onClose }: { user: User; onClose: () => void }) {
   );
 }
 
+function AnonymizeUser({ user, onClose }: { user: User; onClose: () => void }) {
+  const invalidate = useInvalidateUsers();
+  const toast = useToast();
+  const [confirmation, setConfirmation] = useState('');
+  const matches = confirmation.trim().toLowerCase() === user.email.toLowerCase();
+  const anonymize = useMutation({
+    mutationFn: () => api(`/api/v1/users/${user.id}/anonymize`, { method: 'POST' }),
+    onSuccess: () => {
+      invalidate();
+      toast('Datos personales suprimidos');
+      onClose();
+    },
+  });
+
+  function onSubmit(e: FormEvent) {
+    e.preventDefault();
+    if (matches) anonymize.mutate();
+  }
+
+  return (
+    <Modal
+      title={`¿Suprimir los datos de ${user.fullName}?`}
+      description="Ley 1581 (habeas data). Se reemplazan el nombre y el correo, se cierran sus sesiones y se borra su bandeja. Las simulaciones quedan en el historial sin datos personales. No se puede deshacer."
+      onClose={onClose}
+    >
+      <form onSubmit={onSubmit} noValidate className="space-y-4">
+        <FormError message={anonymize.isError ? errorMessage(anonymize.error) : null} />
+        <Field
+          label={`Escribe ${user.email} para confirmar`}
+          value={confirmation}
+          onChange={(e) => setConfirmation(e.target.value)}
+          autoComplete="off"
+          spellCheck={false}
+        />
+        <div className="flex gap-2 pt-2">
+          <Button type="button" variant="ghost" className="flex-1" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button
+            type="submit"
+            variant="danger"
+            className="flex-1"
+            disabled={!matches || anonymize.isPending}
+          >
+            {anonymize.isPending ? <Spinner /> : <UserX size={16} />}
+            Suprimir datos
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 type Dialog =
-  { kind: 'create' } | { kind: 'edit'; user: User } | { kind: 'delete'; user: User } | null;
+  | { kind: 'create' }
+  | { kind: 'edit'; user: User }
+  | { kind: 'delete'; user: User }
+  | { kind: 'anonymize'; user: User }
+  | null;
 
 export default function Users() {
   const { user: me } = useAuth();
@@ -493,6 +550,20 @@ export default function Users() {
                             >
                               <Trash2 size={16} />
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => setDialog({ kind: 'anonymize', user: u })}
+                              disabled={isMe}
+                              title={
+                                isMe
+                                  ? 'No puedes suprimir tus propios datos'
+                                  : 'Suprimir datos personales (habeas data)'
+                              }
+                              aria-label={`Suprimir los datos personales de ${u.fullName}`}
+                              className="grid size-9 place-items-center rounded-ctrl text-ash hover:bg-surface-2 hover:text-frost disabled:opacity-30 disabled:hover:bg-transparent"
+                            >
+                              <UserX size={16} />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -510,6 +581,9 @@ export default function Users() {
       {dialog?.kind === 'edit' && <EditUser user={dialog.user} onClose={() => setDialog(null)} />}
       {dialog?.kind === 'delete' && (
         <DeleteUser user={dialog.user} onClose={() => setDialog(null)} />
+      )}
+      {dialog?.kind === 'anonymize' && (
+        <AnonymizeUser user={dialog.user} onClose={() => setDialog(null)} />
       )}
     </>
   );

@@ -2,12 +2,14 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import {
   CalendarClock,
   CheckCheck,
+  ChevronRight,
   ShieldAlert,
   Sparkles,
   TrendingUp,
   type LucideIcon,
 } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { PageHeader } from '../../components/app/AppShell';
 import { Button } from '../../components/ui/Button';
 import { FormError, Spinner } from '../../components/ui/Field';
@@ -25,6 +27,7 @@ import { errorMessage } from '../../lib/errors';
 import { formatDateTime } from '../../lib/format';
 import { keys } from '../../lib/queries';
 import type {
+  AiAlert,
   AppNotification,
   NotificationPreferences,
   NotificationType,
@@ -163,6 +166,70 @@ function Inbox() {
                 </li>
               );
             })}
+          </ul>
+          <Pagination page={page} totalPages={data.page.totalPages} onChange={setPage} />
+        </>
+      )}
+    </Card>
+  );
+}
+
+const ALERT_STATUS: Record<AiAlert['status'], string> = {
+  PENDING: 'En análisis',
+  DONE: 'Lista',
+  FAILED: 'No se pudo generar',
+};
+
+function Alerts() {
+  const [page, setPage] = useState(0);
+  const { data, isPending, isError, error, refetch } = useQuery({
+    queryKey: [...keys.alerts, page],
+    queryFn: ({ signal }) =>
+      api<Page<AiAlert>>('/api/v1/me/alerts', { query: { page, size: 5 }, signal }),
+    placeholderData: keepPreviousData,
+  });
+
+  return (
+    <Card>
+      <CardTitle>
+        <span className="flex items-center gap-2">
+          <Sparkles size={18} className="text-ember" /> Alertas con IA
+        </span>
+      </CardTitle>
+      {isPending ? (
+        <div className="space-y-2">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Skeleton key={i} className="h-14" />
+          ))}
+        </div>
+      ) : isError ? (
+        <ErrorState error={error} onRetry={() => refetch()} />
+      ) : data.content.length === 0 ? (
+        <EmptyState
+          title="Aún no tienes alertas"
+          text="Cada simulación genera una lectura con IA de tu escenario."
+        />
+      ) : (
+        <>
+          <ul className="divide-y divide-line">
+            {data.content.map((a) => (
+              <li key={a.id}>
+                <Link
+                  to={`/app/simulaciones/${a.simulationId}`}
+                  className="group flex items-center gap-4 py-3.5"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium group-hover:text-ember">
+                      {a.title ?? 'Alerta de tu simulación'}
+                    </p>
+                    <p className="mt-0.5 text-xs text-ash">
+                      {ALERT_STATUS[a.status]} · {formatDateTime(a.completedAt ?? a.createdAt)}
+                    </p>
+                  </div>
+                  <ChevronRight size={16} className="shrink-0 text-ash group-hover:text-ember" />
+                </Link>
+              </li>
+            ))}
           </ul>
           <Pagination page={page} totalPages={data.page.totalPages} onChange={setPage} />
         </>
@@ -320,10 +387,13 @@ export default function Notifications() {
     <>
       <PageHeader
         title="Notificaciones"
-        description="Avisos sobre tus alertas, el mercado y la seguridad de tu cuenta."
+        description="Avisos sobre tus alertas con IA, el mercado y la seguridad de tu cuenta."
       />
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <Inbox />
+        <div className="space-y-6">
+          <Inbox />
+          <Alerts />
+        </div>
         <Preferences />
       </div>
     </>

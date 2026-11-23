@@ -13,6 +13,7 @@ export const keys = {
   alert: (id: string) => ['simulation', id, 'alert'] as const,
   unread: ['me', 'notifications', 'unread'] as const,
   notifications: ['me', 'notifications'] as const,
+  alerts: ['me', 'alerts'] as const,
   preferences: ['me', 'notification-preferences'] as const,
   sentiment: ['news', 'sentiment'] as const,
 };
