@@ -29,7 +29,10 @@ export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="preguntas" className="mx-auto grid max-w-7xl scroll-mt-24 gap-10 px-4 py-24 sm:px-6 lg:grid-cols-12">
+    <section
+      id="preguntas"
+      className="mx-auto grid max-w-7xl scroll-mt-24 gap-10 px-4 py-24 sm:px-6 lg:grid-cols-12"
+    >
       <h2 className="display text-4xl font-bold sm:text-5xl lg:col-span-4">Preguntas frecuentes</h2>
       <ul className="lg:col-span-8">
         {ITEMS.map((item, i) => {

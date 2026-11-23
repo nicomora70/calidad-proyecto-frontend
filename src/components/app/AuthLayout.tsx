@@ -4,7 +4,15 @@ import { Logo } from '../ui/Logo';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
 /** Marco compartido por ingreso y cambio de contraseña: formulario a la izquierda, x2 a la derecha. */
-export function AuthLayout({ title, intro, children }: { title: string; intro: ReactNode; children: ReactNode }) {
+export function AuthLayout({
+  title,
+  intro,
+  children,
+}: {
+  title: string;
+  intro: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
       <div className="flex flex-col px-4 py-6 sm:px-10">
@@ -30,7 +38,9 @@ export function AuthLayout({ title, intro, children }: { title: string; intro: R
           style={{ background: 'radial-gradient(60% 50% at 60% 55%, var(--glow), transparent)' }}
         />
         <div className="relative w-[26rem]">
-          <p className="num font-display text-[7.5rem] leading-none font-extrabold text-ember">x2</p>
+          <p className="num font-display text-[7.5rem] leading-none font-extrabold text-ember">
+            x2
+          </p>
           <div className="mt-8 grid grid-cols-2 gap-4">
             <div className="rounded-card border border-line bg-bg/60 p-5 backdrop-blur">
               <p className="text-sm text-ash">NASDAQ 100</p>

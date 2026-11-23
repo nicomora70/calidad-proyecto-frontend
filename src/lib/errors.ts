@@ -55,7 +55,10 @@ const MESSAGES: Record<string, string> = {
 
 export function errorMessage(err: unknown): string {
   if (err instanceof ApiError) {
-    return MESSAGES[err.code] ?? (err.status >= 500 ? 'Algo falló en el servidor. Inténtalo de nuevo.' : err.message);
+    return (
+      MESSAGES[err.code] ??
+      (err.status >= 500 ? 'Algo falló en el servidor. Inténtalo de nuevo.' : err.message)
+    );
   }
   return MESSAGES.NETWORK_ERROR;
 }

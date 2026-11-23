@@ -65,7 +65,8 @@ async function parseProblem(res: Response): Promise<Problem> {
 
 async function send(path: string, init: RequestInit, auth: boolean): Promise<Response> {
   const headers = new Headers(init.headers);
-  if (init.body && !(init.body instanceof FormData)) headers.set('Content-Type', 'application/json');
+  if (init.body && !(init.body instanceof FormData))
+    headers.set('Content-Type', 'application/json');
   if (auth && accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
   try {
     return await fetch(`${BASE_URL}${path}`, { ...init, headers });
@@ -81,10 +82,14 @@ export function refreshSession(): Promise<TokenResponse> {
   if (!token) return Promise.reject(new ApiError(401, { code: 'INVALID_REFRESH_TOKEN' }));
 
   refreshPromise = (async () => {
-    const res = await send('/api/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refreshToken: token }),
-    }, false);
+    const res = await send(
+      '/api/auth/refresh',
+      {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken: token }),
+      },
+      false,
+    );
     if (!res.ok) {
       const problem = await parseProblem(res);
       // Solo un rechazo explícito cierra la sesión; un fallo de red la conserva.
@@ -146,7 +151,11 @@ export async function api<T>(path: string, opts?: RequestOptions): Promise<T> {
 }
 
 /** Descarga un archivo autenticado (exportes CSV) con el nombre que sugiere el servidor. */
-export async function download(path: string, query?: RequestOptions['query'], fallbackName = 'export.csv') {
+export async function download(
+  path: string,
+  query?: RequestOptions['query'],
+  fallbackName = 'export.csv',
+) {
   const res = await request(path, { query });
   const disposition = res.headers.get('Content-Disposition') ?? '';
   const name = /filename="?([^";]+)"?/.exec(disposition)?.[1] ?? fallbackName;

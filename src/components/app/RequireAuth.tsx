@@ -6,7 +6,11 @@ import { Spinner } from '../ui/Field';
 
 export function FullScreenLoader() {
   return (
-    <div className="grid min-h-dvh place-items-center text-ember" role="status" aria-label="Cargando">
+    <div
+      className="grid min-h-dvh place-items-center text-ember"
+      role="status"
+      aria-label="Cargando"
+    >
       <Spinner className="size-6" />
     </div>
   );
@@ -31,8 +35,12 @@ export function RequireRole({ roles, children }: { roles: Role[]; children: Reac
   if (!hasRole(...roles)) {
     return (
       <div className="mx-auto max-w-md py-24 text-center">
-        <h1 className="font-display text-2xl font-semibold">Esta sección no está disponible para tu rol</h1>
-        <p className="mt-2 text-ash">Si la necesitas, pídele acceso al administrador de tu empresa.</p>
+        <h1 className="font-display text-2xl font-semibold">
+          Esta sección no está disponible para tu rol
+        </h1>
+        <p className="mt-2 text-ash">
+          Si la necesitas, pídele acceso al administrador de tu empresa.
+        </p>
       </div>
     );
   }

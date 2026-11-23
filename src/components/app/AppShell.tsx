@@ -1,4 +1,5 @@
-import { ChevronDown, KeyRound, LogOut, Menu, X } from 'lucide-react';
+import { Bell, ChevronDown, KeyRound, LogOut, Menu, X } from 'lucide-react';
+import { useUnreadCount } from '../../lib/queries';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ROLE_LABEL, useAuth } from '../../lib/auth';
@@ -107,6 +108,25 @@ function UserMenu() {
   );
 }
 
+function NotificationBell() {
+  const { data: count = 0 } = useUnreadCount();
+  const label = count === 0 ? 'Notificaciones' : `Notificaciones, ${count} sin leer`;
+  return (
+    <Link
+      to="/app/notificaciones"
+      aria-label={label}
+      className="relative grid size-10 place-items-center rounded-ctrl border border-line text-ash transition-colors hover:text-ink"
+    >
+      <Bell size={18} />
+      {count > 0 && (
+        <span className="num absolute -top-1.5 -right-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-ember px-1 text-[11px] font-bold text-on-ember">
+          {count > 99 ? '99+' : count}
+        </span>
+      )}
+    </Link>
+  );
+}
+
 export function AppShell() {
   const [drawer, setDrawer] = useState(false);
   const location = useLocation();
@@ -145,7 +165,12 @@ export function AppShell() {
       </aside>
 
       {drawer && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Menú">
+        <div
+          className="fixed inset-0 z-50 lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menú"
+        >
           <button
             type="button"
             aria-label="Cerrar menú"
@@ -186,6 +211,7 @@ export function AppShell() {
             <Menu size={18} />
           </button>
           <div className="flex-1" />
+          <NotificationBell />
           <ThemeToggle />
           <UserMenu />
         </header>
