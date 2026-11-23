@@ -9,6 +9,20 @@ import { ThemeProvider } from './lib/theme';
 import { router } from './router';
 import './styles/index.css';
 
+// Tras un despliegue, una pestaña abierta pide chunks con hashes que ya no existen: recargar una vez
+// trae la versión nueva. La marca en sessionStorage evita un bucle si el fallo es otro.
+window.addEventListener('vite:preloadError', (event) => {
+  try {
+    const last = Number(sessionStorage.getItem('ritech-reload-at') ?? 0);
+    if (Date.now() - last < 10_000) return;
+    sessionStorage.setItem('ritech-reload-at', String(Date.now()));
+  } catch {
+    // sin sessionStorage: recargar igual
+  }
+  event.preventDefault();
+  window.location.reload();
+});
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
