@@ -25,6 +25,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
+      # El lockfile se genera con npm 11; npm 10 (el de Node 22) lo rechaza por las
+      # dependencias opcionales de WebAssembly (@emnapi/*). Se usa la misma versión.
+      - name: Usar npm 11
+        run: npm install -g npm@11.6.2
+
       - name: Instalar dependencias
         run: npm ci
 
